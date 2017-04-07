@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fei.carFetcher.mapper.CarModelMapper" >
+  <resultMap id="BaseResultMap" type="com.fei.carFetcher.pojo.CarModel" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="P_ID" property="pId" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="INTEGER" />
+    <result column="INITIALED" property="initialed" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="GRADE" property="grade" jdbcType="VARCHAR" />
+    <result column="DISPLACEMENT" property="displacement" jdbcType="DECIMAL" />
+    <result column="MANNED_NUM" property="mannedNum" jdbcType="INTEGER" />
+    <result column="TOTAL_WEIGHT" property="totalWeight" jdbcType="DECIMAL" />
+    <result column="CURB_WEIGHT" property="curbWeight" jdbcType="DECIMAL" />
+    <result column="LOAD_WEIGHT" property="loadWeight" jdbcType="DECIMAL" />
+    <result column="OIL_CONSUMPTION" property="oilConsumption" jdbcType="DECIMAL" />
+    <result column="GEARBOX" property="gearbox" jdbcType="VARCHAR" />
+    <result column="ENERGY" property="energy" jdbcType="INTEGER" />
+    <result column="ENV_STANDARD" property="envStandard" jdbcType="VARCHAR" />
+    <result column="TANK_CAPACITY" property="tankCapacity" jdbcType="DECIMAL" />
+    <result column="LOGO_PATH" property="logoPath" jdbcType="VARCHAR" />
+    <result column="SORT" property="sort" jdbcType="INTEGER" />
+    <result column="CREATER_ID" property="createrId" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="MODIFITER_ID" property="modifiterId" jdbcType="VARCHAR" />
+    <result column="CAR_NUM" property="carNum" jdbcType="VARCHAR" />
+    <result column="OIL_LV" property="oilLv" jdbcType="VARCHAR" />
+    
+    <result column="BRAND_NAME" property="brandName" jdbcType="VARCHAR" />
+    <result column="FACTOR_NAME" property="factorName" jdbcType="VARCHAR" />
+    <result column="CAR_NAME" property="carName" jdbcType="VARCHAR" />
+    
+    <result column="MODEL_COMMAND" property="modelCommand" jdbcType="VARCHAR" />
+    <result column="CAR_STATUS" property="carStatus" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID, P_ID, TYPE, INITIALED, NAME, GRADE, DISPLACEMENT, MANNED_NUM, TOTAL_WEIGHT, CURB_WEIGHT, 
+    LOAD_WEIGHT, OIL_CONSUMPTION, GEARBOX, ENERGY, ENV_STANDARD, TANK_CAPACITY, LOGO_PATH,SORT, 
+    CREATER_ID, CREATE_TIME, MODIFY_TIME, MODIFITER_ID,MODEL_COMMAND,CAR_STATUS
+  </sql>
+  
+  <select id="selectCarModelByPidAndName" resultMap="BaseResultMap">
+	select
+		<include refid="Base_Column_List"></include>  
+	from C_CAR_MODEL
+	WHERE 
+		P_ID=#{pid,jdbcType=VARCHAR}
+	AND 
+		NAME=#{name,jdbcType=VARCHAR}
+  </select>
+ 
+ <insert id="insertSelective" parameterType="com.fei.carFetcher.pojo.CarModel" >
+  <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+            select SYS_GUID() as id from DUAL
+      </selectKey>
+    insert into C_CAR_MODEL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="pId != null" >
+        P_ID,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="initialed != null" >
+        INITIALED,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="grade != null" >
+        GRADE,
+      </if>
+      <if test="displacement != null" >
+        DISPLACEMENT,
+      </if>
+      <if test="mannedNum != null" >
+        MANNED_NUM,
+      </if>
+      <if test="totalWeight != null" >
+        TOTAL_WEIGHT,
+      </if>
+      <if test="curbWeight != null" >
+        CURB_WEIGHT,
+      </if>
+      <if test="loadWeight != null" >
+        LOAD_WEIGHT,
+      </if>
+      <if test="oilConsumption != null" >
+        OIL_CONSUMPTION,
+      </if>
+      <if test="gearbox != null" >
+        GEARBOX,
+      </if>
+      <if test="energy != null" >
+        ENERGY,
+      </if>
+      <if test="envStandard != null" >
+        ENV_STANDARD,
+      </if>
+      <if test="tankCapacity != null" >
+        TANK_CAPACITY,
+      </if>
+      <if test="logoPath != null" >
+        LOGO_PATH,
+      </if>
+      <if test="sort != null" >
+        SORT,
+      </if>
+      <if test="createrId != null" >
+        CREATER_ID,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="modifyTime != null" >
+        MODIFY_TIME,
+      </if>
+      <if test="modifiterId != null" >
+        MODIFITER_ID,
+      </if>
+      <if test="modelCommand != null" >
+        MODEL_COMMAND,
+      </if>
+      <if test="carStatus != null" >
+        CAR_STATUS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="pId != null" >
+        #{pId,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=DECIMAL},
+      </if>
+      <if test="initialed != null" >
+        #{initialed,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="displacement != null" >
+        #{displacement,jdbcType=DECIMAL},
+      </if>
+      <if test="mannedNum != null" >
+        #{mannedNum,jdbcType=INTEGER},
+      </if>
+      <if test="totalWeight != null" >
+        #{totalWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="curbWeight != null" >
+        #{curbWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="loadWeight != null" >
+        #{loadWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="oilConsumption != null" >
+        #{oilConsumption,jdbcType=DECIMAL},
+      </if>
+      <if test="gearbox != null" >
+        #{gearbox,jdbcType=VARCHAR},
+      </if>
+      <if test="energy != null" >
+        #{energy,jdbcType=INTEGER},
+      </if>
+      <if test="envStandard != null" >
+        #{envStandard,jdbcType=VARCHAR},
+      </if>
+      <if test="tankCapacity != null" >
+        #{tankCapacity,jdbcType=DECIMAL},
+      </if>
+      <if test="logoPath != null" >
+        #{logoPath,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="createrId != null" >
+        #{createrId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiterId != null" >
+        #{modifiterId,jdbcType=VARCHAR},
+      </if>
+      <if test="modelCommand != null" >
+        #{modelCommand,jdbcType=VARCHAR},
+      </if>
+      <if test="carStatus != null" >
+        #{carStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+ 
+ <update id="updateByPrimaryKeySelective" parameterType="com.fei.carFetcher.pojo.CarModel" >
+    update C_CAR_MODEL
+    <set >
+      <if test="pId != null" >
+        P_ID = #{pId,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=DECIMAL},
+      </if>
+      <if test="initialed != null" >
+        INITIALED = #{initialed,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        GRADE = #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="displacement != null" >
+        DISPLACEMENT = #{displacement,jdbcType=DECIMAL},
+      </if>
+      <if test="mannedNum != null" >
+        MANNED_NUM = #{mannedNum,jdbcType=INTEGER},
+      </if>
+      <if test="totalWeight != null" >
+        TOTAL_WEIGHT = #{totalWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="curbWeight != null" >
+        CURB_WEIGHT = #{curbWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="loadWeight != null" >
+        LOAD_WEIGHT = #{loadWeight,jdbcType=DECIMAL},
+      </if>
+      <if test="oilConsumption != null" >
+        OIL_CONSUMPTION = #{oilConsumption,jdbcType=DECIMAL},
+      </if>
+      <if test="gearbox != null" >
+        GEARBOX = #{gearbox,jdbcType=VARCHAR},
+      </if>
+      <if test="energy != null" >
+        ENERGY = #{energy,jdbcType=INTEGER},
+      </if>
+      <if test="envStandard != null" >
+        ENV_STANDARD = #{envStandard,jdbcType=VARCHAR},
+      </if>
+      <if test="tankCapacity != null" >
+        TANK_CAPACITY = #{tankCapacity,jdbcType=DECIMAL},
+      </if>
+      <if test="logoPath != null" >
+        LOGO_PATH = #{logoPath,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+       SORT = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="modifiterId != null" >
+        MODIFITER_ID = #{modifiterId,jdbcType=VARCHAR},
+      </if>
+      <if test="modelCommand != null" >
+        MODEL_COMMAND = #{modelCommand,jdbcType=VARCHAR},
+      </if>
+      <if test="carStatus != null" >
+        CAR_STATUS = #{carStatus,jdbcType=VARCHAR},
+      </if>
+      MODIFY_TIME = SYSDATE
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+ 
+</mapper>
