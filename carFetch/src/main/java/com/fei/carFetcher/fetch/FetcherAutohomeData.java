@@ -3,6 +3,7 @@ package com.fei.carFetcher.fetch;
 import com.fei.carFetcher.pojo.CarModel;
 import com.fei.carFetcher.service.CarModelService;
 import com.fei.carFetcher.utils.HttpClientUtil;
+import com.fei.carFetcher.utils.PinyinUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jsoup.Jsoup;
@@ -79,7 +80,9 @@ public class FetcherAutohomeData {
 			CarModel pinpai = new CarModel();
 			pinpai.setType(1);
 			pinpai.setName(firstBrand);
+			String shouzimu = PinyinUtil.getFirstStr(pinpai.getName());
 			pinpai.setpId("0");
+			pinpai.setInitialed(shouzimu);
 			CarModel carModel = carModelService.getCarModelByPidAndName(pinpai.getpId(), pinpai.getName());
 			if(carModel==null){
 				carModelService.insertCarModel(pinpai);

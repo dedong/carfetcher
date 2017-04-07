@@ -28,7 +28,13 @@ public class ParserStopSalePage {
      * @throws IOException 
      */
     public static List<String> parseStopSaleData(String url) throws IOException{
-    	Document document = getDocument(url);
+    	Document document = null;
+		try {
+			document = getDocument(url);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
         List<String> lists = Lists.newArrayList();
         //这部分用来获取参数配置
         Elements configElems = document.select(".models_nav");
