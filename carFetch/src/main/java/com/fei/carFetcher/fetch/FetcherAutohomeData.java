@@ -1,5 +1,6 @@
 package com.fei.carFetcher.fetch;
 
+import com.alibaba.druid.sql.visitor.functions.Char;
 import com.fei.carFetcher.pojo.CarModel;
 import com.fei.carFetcher.pojo.StopSale;
 import com.fei.carFetcher.service.CarModelService;
@@ -47,12 +48,14 @@ public class FetcherAutohomeData {
 
 	/**
 	 * 得到所有的页面
+	 * @param end 
+	 * @param begin 
 	 * 
 	 * @return
 	 */
-	private  List<String> pages() {
+	private  List<String> pages(Character begin, Character end) {
 		List<String> urls = Lists.newArrayList();
-		for (char i = 65; i < 91; i++) {
+		for (char i = begin; i <= end; i++) {
 			String url = "http://www.autohome.com.cn/grade/carhtml/" + i + ".html";
 			urls.add(url);
 		}
@@ -66,25 +69,13 @@ public class FetcherAutohomeData {
 
 	/**
 	 * 解析http://www.autohome.com.cn/grade/carhtml/A.html这种格式的页面 按照三层目录层级排放
-	 * http://car1.autoimg.cn/logo/brand/50/129472203719848750.jpg,奥迪,奥迪(进口),Crosslane
-	 * Coupe,http://www.autohome.com.cn/2908/#levelsource=000000000_0&pvareaid=101594
-	 * http://car1.autoimg.cn/logo/brand/50/129472203719848750.jpg,奥迪,奥迪(进口),奥迪TT
-	 * offroad,http://www.autohome.com.cn/3479/#levelsource=000000000_0&pvareaid=101594
-	 * http://car1.autoimg.cn/logo/brand/50/129472203719848750.jpg,奥迪,奥迪(进口),e-tron
-	 * quattro,http://www.autohome.com.cn/3894/#levelsource=000000000_0&pvareaid=101594
-	 * http://car1.autoimg.cn/logo/brand/50/129472203719848750.jpg,奥迪,奥迪(进口),Nanuk,http://www.autohome.com.cn/3210/#levelsource=000000000_0&pvareaid=101594
-	 * http://car1.autoimg.cn/logo/brand/50/129472203719848750.jpg,奥迪,奥迪(进口),quattro,http://www.autohome.com.cn/2218/#levelsource=000000000_0&pvareaid=101594
-	 * 
 	 * @param url
 	 * @return
 	 * @throws IOException
 	 */
 	private  Map<String, CarModel> fetchSinglePageLink(String url) throws IOException {
-		Map<String, String> singlePageMap = Maps.newLinkedHashMap();
-		Map<String, String> grayPageMap = Maps.newLinkedHashMap();
 		Map<String, CarModel> carModelMap = Maps.newConcurrentMap();
 		List<CarModel> carModels = new ArrayList<>();
-		List<Map<String, String>> lists = Lists.newArrayListWithCapacity(2);
 		Document document = getDocument(url);
 		Elements dlElems = document.select("dl");
 		for (int i = 0; i < dlElems.size(); i++) {
@@ -130,18 +121,7 @@ public class FetcherAutohomeData {
 						continue;
 					}
 					String thirdBrand = "";
-					if (aElems.hasClass("greylink")) {
-						thirdBrand = aElems.text();
-
-						grayPageMap.put(aElems.attr("href").replace("#levelsource=000000000_0&pvareaid=101594", ""),
-								"\"" + firstBrand + "\"" + "," + "\"" + firstBrandId + "\"" + "," + "\"" + img + "\""
-										+ "," + "\"" + secondBrand + "\"" + "," + "\"" + thirdBrand + "\"");
-					} else {
-						thirdBrand = aElems.text();
-						singlePageMap.put(aElems.attr("href").replace("#levelsource=000000000_0&pvareaid=101594", ""),
-								"\"" + firstBrand + "\"" + "," + "\"" + firstBrandId + "\"" + "," + "\"" + img + "\""
-										+ "," + "\"" + secondBrand + "\"" + "," + "\"" + thirdBrand + "\"");
-					}
+					thirdBrand = aElems.text();
 					String hrefUrl = aElems.attr("href").replace("#levelsource=000000000_0&pvareaid=101594", "");
 					CarModel chexi = new CarModel();
 					chexi.setType(3);
@@ -159,32 +139,19 @@ public class FetcherAutohomeData {
 
 			}
 		}
-
-		lists.add(singlePageMap);
-		lists.add(grayPageMap);
 		return carModelMap;
 	}
 
 	/**
 	 * 解析程序的入口 只要调用这个函数就可以获取全部数据
-	 * 
-	 * @param salePath
-	 *            写入在售车型数据
-	 * @param stopSalePath
-	 *            写入停售车型数据
 	 * @return
 	 * @throws IOException
 	 */
-	public void get() {
-		List<String> pages = pages();
-		// pages.parallelStream().parallel().forEach(pageUrl -> {
+	public void get(Character begin,Character end) {
+		List<String> pages = pages(begin,end);
 		for (String pageUrl : pages) {
 			try {
 				Map<String, CarModel> mapPair = fetchSinglePageLink(pageUrl);
-				/*
-				 * Map<String, String> singleMap = mapPair.get(0); Map<String,
-				 * String> grayMap = mapPair.get(1);
-				 */
 				// 处理带有配置参数的页面
 				for (Map.Entry<String, CarModel> entry : mapPair.entrySet()) {
 					String homeUrl = entry.getKey();
@@ -209,7 +176,6 @@ public class FetcherAutohomeData {
 						}
 					}
 					}
-					// parseMap(stopSaleListMap, data, stopSalePath);
 					Optional<Map<String, String>> priceMap = ParserHomePage.parseHomePage(homeUrl, "");
 					if (priceMap != null) {
 						if (priceMap.isPresent()) {
@@ -240,52 +206,8 @@ public class FetcherAutohomeData {
 		}
 	}
 
-	private static void parseMap(Map<StopSale, List<List<Object>>> map, String data, String stopSalePath)
-			throws IOException {
-		if (map == null) {
-			String s = "finally value:(only data)" + data;
-			System.out.println(s);
-			String write = data + "\n";
-			writeStringtoFile(stopSalePath, write, true);
-		} else {
-			map.forEach((stopSale, lists) -> {
-				if (lists == null) {
-					String s = "finally value:(data and stopSale)" + data + "," + stopSale;
-					System.out.println(s);
-					String write = data + "," + stopSale + "\n";
-					try {
-						writeStringtoFile(stopSalePath, write, true);
-					} catch (IOException e) {
-					}
-
-				} else {
-					lists.forEach(list -> {
-						list = list.stream().map(obj -> "\"" + obj + "\"" + ",").collect(Collectors.toList());
-						String lst = "";
-						for (Object o : list) {
-							lst += o;
-						}
-						String s = "finally value:(all)" + data + "," + stopSale + "," + lst;
-						System.out.println(s);
-						String write = data + "," + stopSale + "," + lst + "\n";
-						try {
-							writeStringtoFile(stopSalePath, write, true);
-						} catch (IOException e) {
-						}
-					});
-				}
-			});
-		}
-	}
 
 	public static void main(String[] args) throws IOException {
-		/*
-		 * Scanner scanner = new Scanner(System.in);
-		 * System.out.println("在售数据的存储路径:"); String salePath = scanner.next();
-		 * System.out.println("停售数据的存储路径:"); String stopSalePath =
-		 * scanner.next(); System.out.println("错误的URL存储路径"); String errorPath =
-		 * scanner.next();
-		 */
-		//FetcherAutohomeData.get("d:/tmp/nosalecar.txt", "d:/tmp/salecar.txt", "d:/tmp/errorcar.txt");
+		new FetcherAutohomeData().get('A','Z');
 	}
 }

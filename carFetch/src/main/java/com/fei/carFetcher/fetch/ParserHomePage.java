@@ -3,7 +3,6 @@ package com.fei.carFetcher.fetch;
 import static com.fei.carFetcher.common.Commons.*;
 
 import com.fei.carFetcher.pojo.CarModel;
-import com.fei.carFetcher.pojo.Price;
 import com.fei.carFetcher.pojo.StopSale;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -61,6 +60,7 @@ public class ParserHomePage {
     public static Map<StopSale,List<CarModel>> parseGrayPage(String url) throws IOException {
         Map<StopSale,List<CarModel>> map = Maps.newLinkedHashMap();
         String link = stopSaleLink(url, "");
+        
         if(link == null) return null;
         List<StopSale> stopSales = ParserStopSalePage.parseStopSaleData(link, "");
         if(stopSales == null) return null;
@@ -83,11 +83,7 @@ public class ParserHomePage {
      * @return
      */
     private static String homePageData(Document document,List<String> oldList){
-        Elements dtElems = document.select(".autoseries-info > dl > dt");
-        Price price = new Price();
-      
         String carName = document.select(".subnav-title-name > a").get(0).text();
-       
         return carName;
     }
 

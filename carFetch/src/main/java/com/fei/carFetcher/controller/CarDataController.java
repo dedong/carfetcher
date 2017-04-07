@@ -1,6 +1,7 @@
 package com.fei.carFetcher.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,9 +24,9 @@ public class CarDataController {
 	@Autowired
 	private FetcherAutohomeData fetcherAutohomeData;
 	
-	@RequestMapping("search")
-	public void getDate(){
-		fetcherAutohomeData.get();
+	@RequestMapping("search/{begin}/{end}")
+	public void getDate(@PathVariable Character begin,@PathVariable Character end){
+		fetcherAutohomeData.get(begin,end);
 	}
 	
 }

@@ -33,8 +33,7 @@ import static com.fei.carFetcher.common.Commons.*;
 /**
  * 
  * @author fei
- * @version 1.0  
- * Function: TODO
+ * @version 1.0 Function: TODO
  */
 public class ParserSpecificPage {
 
@@ -55,8 +54,10 @@ public class ParserSpecificPage {
 		} catch (Exception e) {
 			parseSpecificPage(url, errorPath);
 		}
-		if (content.contains("抱歉，暂无相关数据。") || content.contains("您访问的页面出错了")) {
-			return null;
+		if (content != null) {
+			if (content.contains("抱歉，暂无相关数据。") || content.contains("您访问的页面出错了")) {
+				return null;
+			}
 		}
 		Html html = Html.create(content);
 		// 取出id 解析其中的js，非贪婪匹配
@@ -69,14 +70,15 @@ public class ParserSpecificPage {
 			System.out.println(config);
 			JSONObject parseObject = JSON.parseObject(config);
 			JSONObject object = (JSONObject) parseObject.get("result");
-		/*	System.out.println(object.getClass());
-			System.out.println(object);
-			System.out.println(object.get("paramtypeitems"));
-			System.out.println(object.get("specsList"));*/
+			/*
+			 * System.out.println(object.getClass());
+			 * System.out.println(object);
+			 * System.out.println(object.get("paramtypeitems"));
+			 * System.out.println(object.get("specsList"));
+			 */
 			List<Specs> specsList = JSON.parseArray(object.get("specsList").toString(), Specs.class);
 			JSONArray parseArray = JSON.parseArray(object.get("paramtypeitems").toString());
-			// parseArray.forEach((p)->{
-			// System.out.println(p);
+
 			// JSONArray array = JSON.parseArray(p.toString());
 			List<CarModel> carModels = new ArrayList<>();
 			for (Specs specs : specsList) {
@@ -86,90 +88,72 @@ public class ParserSpecificPage {
 				for (Object object2 : parseArray) {
 					JSONObject obj = (JSONObject) object2;
 					String param = obj.get("paramitems").toString();
-					//System.out.println(param);
+					// System.out.println(param);
 					List<ParamItem> list = JSON.parseArray(param, com.fei.carFetcher.pojo.ParamItem.class);
 					for (ParamItem paramItem : list) {
 						String name = paramItem.getName();
-						//System.out.println(name);
+						// System.out.println(name);
 						List<Map<String, String>> valueitems = paramItem.getValueitems();
 						for (Map<String, String> map : valueitems) {
 							String id = map.get("specid");
-							if(specsId.equals(id)){
+							if (specsId.equals(id)) {
 								String str = map.get("value");
-							if("车型名称".equals(name)){
-								carModel.setName(str);
-							}else if("级别".equals(name)){
-								carModel.setGrade(str);
-							}else if("变速箱".equals(name)){
-								carModel.setGearbox(str);
-							}else if(name.contains("工信部综合油耗")){
-								try {
-									double parseDouble = Double.parseDouble(str);
-									carModel.setOilConsumption(BigDecimal.valueOf(parseDouble));
-								} catch (Exception e) {
+								if ("车型名称".equals(name)) {
+									carModel.setName(str);
+								} else if ("级别".equals(name)) {
+									carModel.setGrade(str);
+								} else if ("变速箱".equals(name)) {
+									carModel.setGearbox(str);
+								} else if (name.contains("工信部综合油耗")) {
+									try {
+										double parseDouble = Double.parseDouble(str);
+										carModel.setOilConsumption(BigDecimal.valueOf(parseDouble));
+									} catch (Exception e) {
+									}
+								} else if (name.contains("座位数")) {
+									try {
+										int parseInt = Integer.parseInt(str);
+										carModel.setMannedNum(parseInt);
+									} catch (Exception e) {
+									}
+								} else if (name.contains("整备质量")) {
+									try {
+										double parseDouble = Double.parseDouble(str);
+										carModel.setCurbWeight(BigDecimal.valueOf(parseDouble));
+									} catch (Exception e) {
+									}
+								} else if (name.contains("油箱容积")) {
+									try {
+										double parseDouble = Double.parseDouble(str);
+										carModel.setTankCapacity(BigDecimal.valueOf(parseDouble));
+									} catch (Exception e) {
+									}
+								} else if ("排量(L)".equals(name)) {
+									try {
+										double parseDouble = Double.parseDouble(str);
+										carModel.setDisplacement(BigDecimal.valueOf(parseDouble));
+									} catch (Exception e) {
+									}
+								} else if ("燃料形式".equals(name)) {
+									if ("汽油".equals(str)) {
+										carModel.setEnergy(5);
+									} else if ("柴油".equals(str)) {
+										carModel.setEnergy(6);
+									} else {
+										carModel.setEnergy(4);
+									}
+								} else if ("环保标准".equals(name)) {
+									carModel.setEnvStandard(str);
 								}
-							}else if (name.contains("座位数")) {
-								try {
-									int parseInt = Integer.parseInt(str);
-									carModel.setMannedNum(parseInt);
-								} catch (Exception e) {
-								}
-							}else if (name.contains("整备质量")) {
-								try {
-									double parseDouble = Double.parseDouble(str);
-									carModel.setCurbWeight(BigDecimal.valueOf(parseDouble));
-								} catch (Exception e) {
-								}
-							}else if (name.contains("油箱容积")) {
-								try {
-									double parseDouble = Double.parseDouble(str);
-									carModel.setTankCapacity(BigDecimal.valueOf(parseDouble));
-								} catch (Exception e) {
-								}
-							}else if ("排量(L)".equals(name)) {
-								try {
-									double parseDouble = Double.parseDouble(str);
-									carModel.setDisplacement(BigDecimal.valueOf(parseDouble));
-								} catch (Exception e) {
-								}
-							}else if ("燃料形式".equals(name)) {
-								if("汽油".equals(str)){
-									carModel.setEnergy(5);
-								}else if("柴油".equals(str)){
-									carModel.setEnergy(6);
-								}else {
-									carModel.setEnergy(4);
-								}
-							}else if ("环保标准".equals(name)) {
-								carModel.setEnvStandard(str);
+							} else {
+								continue;
 							}
-						}else{
-							continue;
-						}
 						}
 					}
 				}
 				carModels.add(carModel);
 			}
-			// });
-			/*Preconditions.checkNotNull(keyLink, "keyLink can not be null");
-			Preconditions.checkNotNull(config, "config can not be null");
-			Preconditions.checkNotNull(option, "option can not be null");*/
-			// 用于将来的扩展
-			// String color = html.regex("var color = (.*?);",1).get();
-			// String innerColor = html.regex("var innerColor=(.*?);",1).get();
-//			String[] ids = split(idList);
-//
-//			List<String> nameList = parseStandardField(keyLink);
-//			Table<String, String, String> configList = parseJson(config, "paramtypeitems", "paramitems", "value", ids);
-//			Table<String, String, String> optionList = parseJson(option, "configtypeitems", "configitems", "value",
-//					ids);
-			//// List<Map<String, List<String>>> colorList =
-			//// parseJsonForColor(color, ids);
-			//// List<Map<String, List<String>>> innerColorList =
-			//// parseJsonForColor(innerColor, ids);
-			//List<List<Object>> fields = parseListNoColor(ids, configList, optionList, nameList);
-			// System.out.println(fields);
+
 			return carModels;
 		} catch (Exception e) {
 			// writeStringtoFile(errorPath,url + "\n",true);
