@@ -75,32 +75,6 @@ public class ParserHomePage {
 		return carName;
 	}
 
-	/**
-	 * 解析车系页面 获取停售页面链接
-	 * 
-	 * @param url
-	 *            车系页面链接
-	 * @param path
-	 *            保存的文件路径
-	 * @throws IOException
-	 */
-	private static String stopSaleLink(String url, String path) throws IOException {
-		try {
-
-			Document document = getDocument(url);
-			String href = document.select(".other-car > .link-sale").attr("href");
-			if (href.isEmpty())
-				return null;
-			String link = "http://www.autohome.com.cn" + href;
-			if (logger.isDebugEnabled()) {
-				logger.debug("stop sale link is:{}", link);
-			}
-			return link;
-		} catch (Exception e) {
-			writeStringtoFile(path, url + "\n", true);
-			return null;
-		}
-	}
 
 	private static List<String> getJsonp(String url) throws IOException {
 		Matcher matcher = pattern.matcher(url);
