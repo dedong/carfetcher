@@ -1,8 +1,6 @@
 package com.fei.carFetcher.fetch;
 
-import com.alibaba.druid.sql.visitor.functions.Char;
 import com.fei.carFetcher.pojo.CarModel;
-import com.fei.carFetcher.pojo.StopSale;
 import com.fei.carFetcher.service.CarModelService;
 import com.fei.carFetcher.utils.HttpClientUtil;
 import com.google.common.collect.Lists;
@@ -24,9 +22,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static com.fei.carFetcher.common.Commons.writeStringtoFile;
 
 
 @Service
@@ -160,21 +155,20 @@ public class FetcherAutohomeData {
 					System.out.println(carModel.getName());
 					System.out.println("id------>"+carModel.getId());
 					System.out.println("pid------->"+carModel.getpId());
-					Map<StopSale, List<CarModel>> stopSaleListMap = ParserHomePage.parseGrayPage(homeUrl);
-					if(stopSaleListMap!=null){
-					for (Map.Entry<StopSale, List<CarModel>> entry2 : stopSaleListMap.entrySet()) {
-						System.out.println(entry2.getKey());
-						for (CarModel carMode2 : entry2.getValue()) {
-							carMode2.setpId(carModel.getId());
-							CarModel oldModel = carModelService.getCarModelByPidAndName(carMode2.getpId(), carMode2.getName());
-							if(oldModel==null){
-								carModelService.insertCarModel(carMode2);
-							}else{
-								carMode2.setId(oldModel.getId());
-								carModelService.updateCarModel(carMode2);
+					List<List<CarModel>> parseGrayPage = ParserHomePage.parseGrayPage(homeUrl);
+					if(parseGrayPage!=null){
+						for (List<CarModel> list : parseGrayPage) {
+							for (CarModel carModel2 : list) {
+								carModel2.setpId(carModel.getId());
+								CarModel oldModel = carModelService.getCarModelByPidAndName(carModel2.getpId(), carModel2.getName());
+								if(oldModel==null){
+									carModelService.insertCarModel(carModel2);
+								}else{
+									carModel2.setId(oldModel.getId());
+									carModelService.updateCarModel(carModel2);
+								}
 							}
 						}
-					}
 					}
 					Optional<Map<String, String>> priceMap = ParserHomePage.parseHomePage(homeUrl, "");
 					if (priceMap != null) {
