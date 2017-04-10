@@ -44,7 +44,7 @@
   <select id="selectCarModelByPidAndName" resultMap="BaseResultMap">
 	select
 		<include refid="Base_Column_List"></include>  
-	from C_CAR_MODEL
+	from C_CAR_MODEL_FEI
 	WHERE 
 		P_ID=#{pid,jdbcType=VARCHAR}
 	AND 
@@ -55,7 +55,7 @@
   <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
             select SYS_GUID() as id from DUAL
       </selectKey>
-    insert into C_CAR_MODEL
+    insert into C_CAR_MODEL_FEI
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         ID,
@@ -207,7 +207,7 @@
   </insert>
  
  <update id="updateByPrimaryKeySelective" parameterType="com.fei.carFetcher.pojo.CarModel" >
-    update C_CAR_MODEL
+    update C_CAR_MODEL_FEI
     <set >
       <if test="pId != null" >
         P_ID = #{pId,jdbcType=VARCHAR},

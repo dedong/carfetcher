@@ -30,7 +30,13 @@ public class ParserHomePage {
 	 * @throws IOException
 	 */
 	public static Optional<Map<String, String>> parseHomePage(String url, String path) throws IOException {
-		Document document = getDocument(url);
+		Document document;
+		try {
+			document = getDocument(url);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 		Map<String, String> homeData = Maps.newLinkedHashMap();
 		List<String> oldList = getJsonp(url);
 		if (oldList == null)

@@ -173,7 +173,7 @@ public class FetcherAutohomeData {
 							}
 						}
 					}
-					/*Optional<Map<String, String>> priceMap = ParserHomePage.parseHomePage(homeUrl, "");
+					Optional<Map<String, String>> priceMap = ParserHomePage.parseHomePage(homeUrl, "");
 					if (priceMap != null) {
 						if (priceMap.isPresent()) {
 							priceMap.get().forEach((configUrl, homeData) -> {
@@ -196,7 +196,7 @@ public class FetcherAutohomeData {
 								}
 							});
 						}
-					}*/
+					}
 				}
 			} catch (IOException e) {
 			}
