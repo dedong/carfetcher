@@ -72,11 +72,10 @@ public class ParserSpecificPage {
 			JSONObject parseObject = JSON.parseObject(config);
 			JSONObject object = (JSONObject) parseObject.get("result");
 			/*
-			 * System.out.println(object.getClass());
-			 * System.out.println(object);
-			 * System.out.println(object.get("paramtypeitems"));
-			 * System.out.println(object.get("specsList"));
-			 */
+			 System.out.println(object.getClass());
+			 System.out.println(object);
+			 System.out.println(object.get("paramtypeitems"));
+			 System.out.println(object.get("specsList"));*/
 			List<Specs> specsList = JSON.parseArray(object.get("specsList").toString(), Specs.class);
 			JSONArray parseArray = JSON.parseArray(object.get("paramtypeitems").toString());
 
@@ -101,9 +100,6 @@ public class ParserSpecificPage {
 								String str = map.get("value");
 								if ("车型名称".equals(name)) {
 									carModel.setName(str);
-									if(str.endsWith("唐 2015款 2.0T 四驱尊贵型")){
-										FileUtils.write(new File("d://fei.txt"), config);
-									}
 								} else if ("级别".equals(name)) {
 									carModel.setGrade(str);
 								} else if ("变速箱".equals(name)) {
