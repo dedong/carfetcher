@@ -1,11 +1,16 @@
 package com.fei.carFetcher.service.impl;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fei.carFetcher.mapper.CarModelMapper;
 import com.fei.carFetcher.pojo.CarModel;
+import com.fei.carFetcher.pojo.CarModelVo;
 import com.fei.carFetcher.service.CarModelService;
+import com.fei.carFetcher.utils.HssfExportUtil;
 
 /**
  * @author fei
@@ -34,6 +39,16 @@ public class CarModelServiceImpl implements CarModelService {
 	public void insertCarModel(CarModel carModel) {
 		carModelMapper.insertSelective(carModel);
 	}
+
+	@Override
+	public void exportCarModel() throws IOException {
+		List<CarModelVo> carModelList = carModelMapper.selectAllCarModel();
+		
+		if(carModelList!=null){
+			HssfExportUtil.exportCarModel(carModelList);
+		}
+	}
+	
 	
 	
 

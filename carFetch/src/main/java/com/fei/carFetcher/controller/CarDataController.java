@@ -1,5 +1,7 @@
 package com.fei.carFetcher.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,4 +31,12 @@ public class CarDataController {
 		fetcherAutohomeData.get(begin,end);
 	}
 	
+	@RequestMapping("export")
+	public void exportCarModel(){
+		try {
+			carModelService.exportCarModel();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

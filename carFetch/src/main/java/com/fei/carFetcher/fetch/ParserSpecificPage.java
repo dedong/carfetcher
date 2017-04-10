@@ -12,6 +12,7 @@ import com.google.common.collect.Table;
 
 import oracle.net.aso.l;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,7 @@ public class ParserSpecificPage {
 		try {
 			content = getDocument(url).toString();
 		} catch (Exception e) {
-			parseSpecificPage(url, errorPath);
+			//parseSpecificPage(url, errorPath);
 		}
 		if (content != null) {
 			if (content.contains("抱歉，暂无相关数据。") || content.contains("您访问的页面出错了")) {
@@ -100,6 +101,9 @@ public class ParserSpecificPage {
 								String str = map.get("value");
 								if ("车型名称".equals(name)) {
 									carModel.setName(str);
+									if(str.endsWith("唐 2015款 2.0T 四驱尊贵型")){
+										FileUtils.write(new File("d://fei.txt"), config);
+									}
 								} else if ("级别".equals(name)) {
 									carModel.setGrade(str);
 								} else if ("变速箱".equals(name)) {

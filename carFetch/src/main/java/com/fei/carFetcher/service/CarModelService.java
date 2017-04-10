@@ -1,5 +1,7 @@
 package com.fei.carFetcher.service;
 
+import java.io.IOException;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fei.carFetcher.pojo.CarModel;
@@ -18,4 +20,6 @@ public interface CarModelService {
 	
 	@Transactional
 	void insertCarModel(CarModel carModel);
+	
+	void exportCarModel() throws IOException;
 }
