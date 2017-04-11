@@ -328,7 +328,10 @@
  </select>
  
  <select id="queryCarModel" statementType="CALLABLE" parameterType="java.util.Map">
- 	{call QUERYCARMODEL(#{result,jdbcType=CURSOR,mode=OUT,javaType=ResultSet,resultMap=BaseResultMap})}
+ 	{call QUERYCARMODEL(#{result,jdbcType=CURSOR,mode=OUT,javaType=ResultSet,resultMap=carModelVoMap})}
+ 	<!-- {call QUERYCOUNT(#{result,jdbcType=INTEGER,mode=OUT})} -->
  </select>
+ 
+ 
  
 </mapper>

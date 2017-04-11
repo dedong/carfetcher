@@ -44,8 +44,12 @@ public class CarModelServiceImpl implements CarModelService {
 
 	@Override
 	public void exportCarModel() throws IOException {
-		List<CarModelVo> carModelList = carModelMapper.selectAllCarModel();
-		
+		//List<CarModelVo> carModelList = carModelMapper.selectAllCarModel();
+		//存储过程begin
+		Map<String, Object> map = new HashMap<>();
+		carModelMapper.queryCarModel(map);
+		List<CarModelVo> carModelList = (List<CarModelVo>) map.get("result");
+		//存储过程end
 		if(carModelList!=null){
 			HssfExportUtil.exportCarModel(carModelList);
 		}
@@ -66,8 +70,8 @@ public class CarModelServiceImpl implements CarModelService {
 		Map<String, Object> map = new HashMap<>();
 		
 		carModelMapper.queryCarModel(map);
-		List<CarModel> carmodels = (List<CarModel>) map.get("result");
-		System.out.println(carmodels.size());
+		Integer count = (Integer) map.get("result");
+		System.out.println(count);
 	}
 	
 	
