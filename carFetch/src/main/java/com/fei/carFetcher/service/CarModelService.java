@@ -22,4 +22,8 @@ public interface CarModelService {
 	void insertCarModel(CarModel carModel);
 	
 	void exportCarModel() throws IOException;
+	
+	void otherOptionsDelete();
+	
+	void test();
 }

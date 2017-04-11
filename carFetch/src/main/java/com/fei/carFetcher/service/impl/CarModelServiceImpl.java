@@ -1,7 +1,9 @@
 package com.fei.carFetcher.service.impl;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +49,25 @@ public class CarModelServiceImpl implements CarModelService {
 		if(carModelList!=null){
 			HssfExportUtil.exportCarModel(carModelList);
 		}
+	}
+
+	@Override
+	public void otherOptionsDelete() {
+		carModelMapper.otherOptionsDelete();
+	}
+
+	@Override
+	public void test() {
+//		Map<String, Object> m = new HashMap<>();
+//		m.put("cid", "A913496D97214877A9CC4BDFF7281A24");
+//		carModelMapper.queryByCondition(m);
+//		System.out.println(m.get("name"));
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		carModelMapper.queryCarModel(map);
+		List<CarModel> carmodels = (List<CarModel>) map.get("result");
+		System.out.println(carmodels.size());
 	}
 	
 	

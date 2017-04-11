@@ -1,13 +1,11 @@
 package com.fei.carFetcher.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-
 import com.fei.carFetcher.pojo.CarModel;
 import com.fei.carFetcher.pojo.CarModelVo;
-import com.github.abel533.mapper.Mapper;
 
 @org.apache.ibatis.annotations.Mapper
 public interface CarModelMapper {
@@ -19,5 +17,10 @@ public interface CarModelMapper {
 	void updateByPrimaryKeySelective(CarModel carModel);
 	
 	List<CarModelVo> selectAllCarModel();
+	
+	void otherOptionsDelete();
+	
+	String queryByCondition(Map<String, Object> m);
 
+	void queryCarModel(Map<String, Object> map);
 }

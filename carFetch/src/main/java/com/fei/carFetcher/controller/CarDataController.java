@@ -39,4 +39,10 @@ public class CarDataController {
 			e.printStackTrace();
 		}
 	}
+	
+	@RequestMapping("test")
+	public void test(){
+		//carModelService.otherOptionsDelete();
+		carModelService.test();
+	}
 }

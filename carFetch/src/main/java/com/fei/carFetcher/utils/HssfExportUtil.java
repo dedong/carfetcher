@@ -17,6 +17,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import com.fei.carFetcher.pojo.CarModelVo;
@@ -48,8 +50,8 @@ public class HssfExportUtil {
 		font.setFontName("黑体");
 		font.setFontHeightInPoints((short) 21);
 		style.setFont(font);
-		style.setVerticalAlignment(CellStyle.VERTICAL_CENTER); // 垂直居中
-		style.setAlignment(CellStyle.ALIGN_CENTER); // 水平居中
+		style.setVerticalAlignment(VerticalAlignment.CENTER); // 垂直居中
+		style.setAlignment(HorizontalAlignment.CENTER); // 水平居中
 		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 13));
 
 		HSSFRow row = sheet.createRow(0);// 标题行

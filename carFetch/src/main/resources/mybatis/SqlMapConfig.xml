@@ -25,4 +25,8 @@
 			<property name="mappers" value="com.github.abel533.mapper.Mapper" />
 		</plugin>
 	</plugins>
+	
+	<mappers>
+		<mapper resource="mapper/CarModelMapper.xml"/>
+	</mappers>
 </configuration>

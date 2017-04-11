@@ -182,6 +182,9 @@ public class FetcherAutohomeData {
 									System.out.println(homeData);
 									if (lists != null) {
 										for (CarModel carModel2 : lists) {
+											if(carModel2.getName().equals("-")){
+												continue;
+											}
 											carModel2.setpId(carModel.getId());
 											CarModel oldModel = carModelService.getCarModelByPidAndName(carModel2.getpId(), carModel2.getName());
 											if(oldModel==null){

@@ -318,5 +318,17 @@
     </set>
     where ID = #{id,jdbcType=VARCHAR}
   </update>
+  
+  <delete id="otherOptionsDelete" statementType="CALLABLE">
+  	{call OPTIONOTHERS}
+  </delete>
+ 
+ <select id="queryByCondition" statementType="CALLABLE" parameterType="java.util.Map">
+ 	{call QUERYBYCONDITION(#{cid,mode=IN,jdbcType=VARCHAR},#{name,mode=OUT,jdbcType=VARCHAR})}
+ </select>
+ 
+ <select id="queryCarModel" statementType="CALLABLE" parameterType="java.util.Map">
+ 	{call QUERYCARMODEL(#{result,jdbcType=CURSOR,mode=OUT,javaType=ResultSet,resultMap=BaseResultMap})}
+ </select>
  
 </mapper>
