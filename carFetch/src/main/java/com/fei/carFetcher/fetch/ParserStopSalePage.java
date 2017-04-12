@@ -29,16 +29,16 @@ public class ParserStopSalePage {
      */
     public static List<String> parseStopSaleData(String url) throws IOException{
     	Document document = null;
+    	List<String> lists = Lists.newArrayList();
 		try {
 			document = getDocument(url);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			return lists;
 		}
-        List<String> lists = Lists.newArrayList();
         //这部分用来获取参数配置
         Elements configElems = document.select(".models_nav");
-        if(configElems.isEmpty())return null;
+        if(configElems.isEmpty())return lists;
         for (Element configElem : configElems) {
             String href = configElem.select("a").get(1).attr("href");
             String link = "http://www.autohome.com.cn/" + href;

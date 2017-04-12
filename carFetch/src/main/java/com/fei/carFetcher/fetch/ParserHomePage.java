@@ -5,11 +5,14 @@ import static com.fei.carFetcher.common.Commons.*;
 import com.fei.carFetcher.pojo.CarModel;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,11 +61,16 @@ public class ParserHomePage {
 	}
 
 	public static List<List<CarModel>> parseGrayPage(String url) throws IOException {
+		List<List<CarModel>> carModels = Lists.newArrayList();
+		String link = stopSaleLink(url, "");
 		List<String> list = ParserStopSalePage.parseStopSaleData(url);
-		if (list == null || list.size() == 0) {
+		if (StringUtils.isNotBlank(link)) {
+			List<String> saleList = ParserStopSalePage.parseStopSaleData(link);
+			list.addAll(saleList);
+		}
+		if (list.size() == 0) {
 			return null;
 		}
-		List<List<CarModel>> carModels = Lists.newArrayList();
 		for (String configLink : list) {
 			List<CarModel> parseSpecificPage = null;
 			parseSpecificPage = ParserSpecificPage.parseSpecificPage(configLink, "");
@@ -73,14 +81,41 @@ public class ParserHomePage {
 	}
 
 	/**
+	 * 解析车系页面 获取停售页面链接
+	 * 
+	 * @param url
+	 *            车系页面链接
+	 * @param path
+	 *            保存的文件路径
+	 * @throws IOException
+	 */
+	private static String stopSaleLink(String url, String path) throws IOException {
+		try {
+
+			Document document = getDocument(url);
+			String href = document.select(".other-car").select(".link-sale").attr("href");
+			if (href.isEmpty())
+				return null;
+			String link = "http://www.autohome.com.cn" + href;
+			if (logger.isDebugEnabled()) {
+				logger.debug("stop sale link is:{}", link);
+			}
+			return link;
+		} catch (Exception e) {
+			writeStringtoFile(path, url + "\n", true);
+			return null;
+		}
+	}
+
+	/**
 	 * 获取车辆名称
+	 * 
 	 * @return
 	 */
 	private static String homePageData(Document document) {
 		String carName = document.select(".subnav-title-name > a").get(0).text();
 		return carName;
 	}
-
 
 	private static List<String> getJsonp(String url) throws IOException {
 		Matcher matcher = pattern.matcher(url);
