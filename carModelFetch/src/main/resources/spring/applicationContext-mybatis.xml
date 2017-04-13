@@ -9,15 +9,14 @@
 	<!-- 定义Mybatis的SqlSessionFactory -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml"></property>
+		<property name="mapperLocations" value="mybatis/mapper/*.xml"></property>
 	</bean>
 
-	<!-- 定义Mapper -->
-	<bean id="userMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-		<!-- mapper对应的接口类 -->
-		<property name="mapperInterface" value="com.fei.carFetcher.mapper.CarModelMapper"></property>
-		
-		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+
+	<!-- mybatis 扫描 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- mapper接口所在的包 -->
+		<property name="basePackage" value="com.fei.carFetcher.mapper"></property>
 	</bean>
 
 </beans>
