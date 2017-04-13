@@ -25,9 +25,9 @@ public class MapperTest {
 		ClassPathXmlApplicationContext context = 
 				new ClassPathXmlApplicationContext("classpath:spring/applicationContext*.xml");
 		
-		SqlSessionFactory sessionFactory = (SqlSessionFactory) context.getBean("sqlSessionFactory");
-		SqlSession session = sessionFactory.openSession(true);
-		carModelMapper = session.getMapper(CarModelMapper.class);
+		/*SqlSessionFactory sessionFactory = (SqlSessionFactory) context.getBean("sqlSessionFactory");
+		SqlSession session = sessionFactory.openSession(true);*/
+		carModelMapper = context.getBean(CarModelMapper.class);
 		
 	}
 
