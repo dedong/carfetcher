@@ -8,7 +8,7 @@ import com.fei.carFetcher.pojo.CarModelVo;
 
 public interface CarModelMapper {
 
-	CarModel selectCarModelByPidAndName(@Param("pid") String pid, @Param("name") String name);
+	List<CarModel> selectCarModelByPidAndName(@Param("pid") String pid, @Param("name") String name);
 
 	void insertSelective(CarModel carModel);
 

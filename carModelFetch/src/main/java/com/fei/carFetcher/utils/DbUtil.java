@@ -1,5 +1,7 @@
 package com.fei.carFetcher.utils;
 
+import java.util.List;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -23,8 +25,11 @@ public class DbUtil {
 	}
 
 	public static synchronized CarModel getCarModelByPidAndName(String pid, String name) {
-		CarModel selectOne = carModelMapper.selectCarModelByPidAndName(pid, name);
-		return selectOne;
+		List<CarModel> list = carModelMapper.selectCarModelByPidAndName(pid, name);
+		if(list.size()>0){
+			return list.get(0);
+		}
+		return null;
 	}
 
 	public static synchronized void updateCarModel(CarModel carModel) {

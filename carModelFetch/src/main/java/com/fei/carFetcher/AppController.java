@@ -25,11 +25,11 @@ public class AppController {
         urls.remove("http://www.autohome.com.cn/grade/carhtml/U.html");
         urls.remove("http://www.autohome.com.cn/grade/carhtml/V.html");
         Collections.sort(urls);
-//        
-//        for (String url : urls) {
-//			Thread thread = new Thread(new FetchThread(url));
-//			thread.start();
-//		}
+        
+      /*  for (String url : urls) {
+			Thread thread = new Thread(new FetchThread(url));
+			thread.start();
+		}*/
 
         Thread thread = new Thread(new FetchThread("http://www.autohome.com.cn/grade/carhtml/A.html"));
 		thread.start();

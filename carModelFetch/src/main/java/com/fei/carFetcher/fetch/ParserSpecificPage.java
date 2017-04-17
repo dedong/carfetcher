@@ -31,6 +31,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -38,9 +40,12 @@ import java.util.Map;
  * @version 1.0 Function: TODO
  */
 public class ParserSpecificPage {
-
-	public static final Logger logger = LoggerFactory.getLogger(ParserSpecificPage.class);
-
+	
+	//名称
+	private final static String NAME_PREX = "<span class='hs_kw0_configpl'></span><span class='hs_kw1_configpl'></span>";
+	
+	//燃油形式
+	private final static String ENERGY_NAME = "燃料形式";
 	/**
 	 * 取出一页详情页的数据
 	 * 
@@ -61,7 +66,7 @@ public class ParserSpecificPage {
 				return null;
 			}
 		}
-		// 取出id 解析其中的js，非贪婪匹配
+		// 取出id 解析其中的js
 		try {
 			Html html = Html.create(content);
 			String idList = html.regex("specIDs =\\[(.*?)\\];", 1).get();
@@ -99,52 +104,55 @@ public class ParserSpecificPage {
 							String id = map.get("specid");
 							if (specsId.equals(id)) {
 								String str = map.get("value");
-								if ("车型名称".equals(name)) {
-									carModel.setName(str);
+								if (NAME_PREX.equals(name)) {
+									//TODO
+									carModel.setName(replaceSpan(str, "%"));
 								} else if ("级别".equals(name)) {
-									carModel.setGrade(str);
+									carModel.setGrade(replaceSpan(str, ""));
 								} else if ("变速箱".equals(name)) {
-									carModel.setGearbox(str);
-								} else if (name.contains("工信部综合油耗")) {
+									carModel.setGearbox(replaceSpan(str, ""));
+								} else if (name.contains("工信部")) {
 									try {
-										double parseDouble = Double.parseDouble(str);
+										double parseDouble = Double.parseDouble(replaceSpan(str, ""));
 										carModel.setOilConsumption(BigDecimal.valueOf(parseDouble));
 									} catch (Exception e) {
 									}
 								} else if (name.contains("座位数")) {
 									try {
-										int parseInt = Integer.parseInt(str);
+										int parseInt = Integer.parseInt(replaceSpan(str, ""));
 										carModel.setMannedNum(parseInt);
 									} catch (Exception e) {
 									}
 								} else if (name.contains("整备质量")) {
 									try {
-										double parseDouble = Double.parseDouble(str);
+										double parseDouble = Double.parseDouble(replaceSpan(str, ""));
 										carModel.setCurbWeight(BigDecimal.valueOf(parseDouble));
 									} catch (Exception e) {
 									}
 								} else if (name.contains("油箱容积")) {
 									try {
-										double parseDouble = Double.parseDouble(str);
+										double parseDouble = Double.parseDouble(replaceSpan(str, ""));
 										carModel.setTankCapacity(BigDecimal.valueOf(parseDouble));
 									} catch (Exception e) {
 									}
-								} else if ("排量(L)".equals(name)) {
+								} else if (name.contains("(L)")) {
 									try {
-										double parseDouble = Double.parseDouble(str);
+										double parseDouble = Double.parseDouble(replaceSpan(str, ""));
 										carModel.setDisplacement(BigDecimal.valueOf(parseDouble));
 									} catch (Exception e) {
 									}
-								} else if ("燃料形式".equals(name)) {
-									if ("汽油".equals(str)) {
+								} else if (ENERGY_NAME.equals(name)) {
+									if ("汽油".equals(replaceSpan(str, ""))) {
 										carModel.setEnergy(5);
-									} else if ("柴油".equals(str)) {
+									} else if ("柴油".equals(replaceSpan(str, ""))) {
 										carModel.setEnergy(6);
 									} else {
-										carModel.setEnergy(4);
+										carModel.setEnergy(5);
 									}
 								} else if ("环保标准".equals(name)) {
-									carModel.setEnvStandard(str);
+									carModel.setEnvStandard(replaceSpan(str, "国"));
+								}else if(replaceSpan(name, "油").equals("油标油")){
+									carModel.setOilLv(replaceSpan(str, ""));
 								}
 							} else {
 								continue;
@@ -168,7 +176,16 @@ public class ParserSpecificPage {
 	        return document;
 
 	    }
+	  
+	  private String replaceSpan(String value,String prex){
+		  String patternContent = "<span class='(.{0,20})'></span>";
+		  Pattern pattern = Pattern.compile(patternContent);
+		  Matcher matcher = pattern.matcher(value);
+		  String replaceAll = matcher.replaceAll(prex);
+		  return replaceAll;
+	  }
 
+	  
 	public static void main(String[] args) throws IOException {
 		//parseSpecificPage("http://car.autohome.com.cn/config/series/2097.html", "");
 	}

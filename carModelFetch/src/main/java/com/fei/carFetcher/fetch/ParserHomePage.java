@@ -22,10 +22,8 @@ import java.util.regex.Pattern;
 
 public class ParserHomePage {
 
-	public static final Pattern pattern = Pattern.compile("(\\d+)");
-	public static final Pattern patternContent = Pattern.compile("\\((.*)\\)");
-
-	public static final Logger logger = LoggerFactory.getLogger(ParserHomePage.class);
+	private ParserStopSalePage pStopSalePage = new ParserStopSalePage();
+	private ParserSpecificPage parserSpecific = new ParserSpecificPage();
 
 	/**
 	 * 用来解析首页 获取车系首页的数据 http://www.autohome.com.cn/2097/
@@ -42,9 +40,6 @@ public class ParserHomePage {
 			return null;
 		}
 		Map<String, String> homeData = Maps.newLinkedHashMap();
-		List<String> oldList = getJsonp(url);
-		if (oldList == null)
-			return null;
 		String carName = homePageData(document);
 		Elements liElems = document.select(".nav-item");
 		if (liElems.isEmpty())
@@ -53,9 +48,6 @@ public class ParserHomePage {
 		if (!aElem.isEmpty()) {
 			String href = aElem.attr("href");
 			homeData.put(href, carName);
-			if (logger.isInfoEnabled()) {
-				logger.info("href is:{}" + href);
-			}
 		}
 		Optional<Map<String, String>> optHomeData = Optional.of(homeData);
 		return optHomeData;
@@ -63,8 +55,7 @@ public class ParserHomePage {
 
 	public  List<List<CarModel>> parseGrayPage(String url) throws IOException {
 		List<List<CarModel>> carModels = Lists.newArrayList();
-		ParserStopSalePage pStopSalePage = new ParserStopSalePage();
-		ParserSpecificPage parserSpecific = new ParserSpecificPage();
+		
 		String link = stopSaleLink(url, "");
 		
 		System.out.println("");
@@ -103,12 +94,8 @@ public class ParserHomePage {
 			if (href.isEmpty())
 				return null;
 			String link = "http://www.autohome.com.cn" + href;
-			if (logger.isDebugEnabled()) {
-				logger.debug("stop sale link is:{}", link);
-			}
 			return link;
 		} catch (Exception e) {
-			//writeStringtoFile(path, url + "\n", true);
 			return null;
 		}
 	}
@@ -121,67 +108,6 @@ public class ParserHomePage {
 	private String homePageData(Document document) {
 		String carName = document.select(".subnav-title-name > a").get(0).text();
 		return carName;
-	}
-
-
-	private List<String> getJsonp(String url) throws IOException {
-		Matcher matcher = pattern.matcher(url);
-		String sid = null;
-		if (matcher.find()) {
-			sid = matcher.group(1);
-		}
-		String jsonp = "http://api.che168.com/auto/ForAutoCarPCInterval.ashx?callback=che168CallBack&_appid=cms&sid="
-				+ sid + "&yid=0&pid=110000";
-		Document document = null;
-		try {
-			document = getDocument(jsonp);
-		} catch (Exception e) {
-			if (e instanceof IllegalArgumentException) {
-			} else {
-				throw e;
-			}
-		}
-		if (document == null)
-			return null;
-		return parseJsonp(document);
-	}
-
-	/**
-	 * 处理jsonp
-	 * {"returncode":0,"message":"","result":{"SId":3343,"YId":0,"minPrice":"4.90","maxPrice":"7.80","url":"http://www.che168.com/china/baojun/baojun610/4_8/?pvareaid=100383","count":8}}
-	 *
-	 * @param document
-	 * @return
-	 */
-	private List<String> parseJsonp(Document document) {
-		List<String> list = Lists.newArrayListWithCapacity(4);
-		String content = document.html();
-		Matcher matcher = patternContent.matcher(content);
-		if (matcher.find()) {
-			content = matcher.group(1);
-		}
-		content = filter(content);
-		if (content.contains("不存在车源信息")) {
-			list.add("暂无");
-			list.add("暂无");
-			list.add("暂无");
-			list.add("暂无");
-			return list;
-		}
-		String SId = content.substring(content.indexOf("SId:") + 4, content.indexOf(",YId"));
-		String minPrice = content.substring(content.indexOf("minPrice:") + 9, content.indexOf(",maxPrice"));
-		String maxPrice = content.substring(content.indexOf("maxPrice:") + 9, content.indexOf(",url"));
-		String count = content.substring(content.indexOf("count:") + 6, content.indexOf("}"));
-		list.add(minPrice);
-		list.add(maxPrice);
-		list.add(count);
-		list.add(SId);
-		return list;
-	}
-
-	private String filter(String content) {
-		String cont = content.replaceAll("&", "").replaceAll("quot;", "").replace("\"", "");
-		return cont;
 	}
 
 	private Document getDocument(String url) throws IOException {

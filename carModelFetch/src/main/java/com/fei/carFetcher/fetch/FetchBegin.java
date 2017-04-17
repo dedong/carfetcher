@@ -1,12 +1,10 @@
 package com.fei.carFetcher.fetch;
 
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,8 +23,6 @@ import com.google.common.collect.Maps;
  */
 public class FetchBegin {
 	
-	public static final Pattern pattern = Pattern.compile("(\\d+)");
-	
 	public void fetch(String url){
 		ParserHomePage parserHomePage = new ParserHomePage();
 		ParserSpecificPage pSpecificPage = new ParserSpecificPage();
@@ -44,17 +40,11 @@ public class FetchBegin {
 				if(parseGrayPage!=null){
 					for (List<CarModel> list : parseGrayPage) {
 						for (CarModel carModel2 : list) {
-							if(carModel2.getName().equals("-")){
-								continue;
+							try {
+								saveCarModel(carModel, carModel2);
+							} catch (SQLIntegrityConstraintViolationException e) {
+								e.printStackTrace();
 							}
-							carModel2.setpId(carModel.getId());
-							CarModel oldModel = DbUtil.getCarModelByPidAndName(carModel2.getpId(), carModel2.getName());
-							if(oldModel==null){
-								DbUtil.insertCarModel(carModel2);
-							}/*else{
-								carModel2.setId(oldModel.getId());
-								carModelService.updateCarModel(carModel2);
-							}*/
 						}
 					}
 				}
@@ -67,14 +57,11 @@ public class FetchBegin {
 								System.out.println(homeData);
 								if (lists != null) {
 									for (CarModel carModel2 : lists) {
-										carModel2.setpId(carModel.getId());
-										CarModel oldModel = DbUtil.getCarModelByPidAndName(carModel2.getpId(), carModel2.getName());
-										if(oldModel==null){
-											DbUtil.insertCarModel(carModel2);
-										}/*else{
-											carModel2.setId(oldModel.getId());
-											carModelService.updateCarModel(carModel2);
-										}*/
+									 try {
+										saveCarModel(carModel, carModel2);
+									} catch (SQLIntegrityConstraintViolationException e) {
+										e.printStackTrace();
+									}
 									}
 								}
 							} catch (IOException e) {
@@ -85,6 +72,24 @@ public class FetchBegin {
 			}
 		} catch (IOException e) {
 		}
+	}
+
+	private void saveCarModel(CarModel carModel, CarModel carModel2) throws SQLIntegrityConstraintViolationException {
+		if(carModel2.getName().equals("-")){
+			return;
+		}
+		carModel2.setpId(carModel.getId());
+		CarModel oldModel = DbUtil.getCarModelByPidAndName(carModel2.getpId(), carModel2.getName());
+		if(oldModel==null){
+			if(carModel2.getName()==null)
+				return;
+			String reName = carModel2.getName().replaceAll("%", "");
+			carModel2.setName(reName);
+			DbUtil.insertCarModel(carModel2);
+		}/*else{
+			carModel2.setId(oldModel.getId());
+			carModelService.updateCarModel(carModel2);
+		}*/
 	}
 
 	/**
@@ -99,7 +104,6 @@ public class FetchBegin {
 		Document document = getDocument(url);
 		Elements dlElems = document.select("dl");
 		for (int i = 0; i < dlElems.size(); i++) {
-			String img = dlElems.get(i).select("dt > a > img").attr("src");
 			String firstBrand = dlElems.get(i).select("dt > div > a").text();
 			CarModel pinpai = new CarModel();
 			pinpai.setType(1);
@@ -114,12 +118,6 @@ public class FetchBegin {
 				pinpai.setId(carModel.getId());
 			}
 		//	carModels.add(pinpai);
-			String href = dlElems.get(i).select("dt > div > a").attr("href");
-			String firstBrandId = null;
-			Matcher matcher = pattern.matcher(href);
-			if (matcher.find()) {
-				firstBrandId = matcher.group(1);
-			}
 			Elements divElems = dlElems.get(i).select("dd > div.h3-tit");
 			for (int j = 0; j < divElems.size(); j++) {
 				String secondBrand = divElems.get(j).text();

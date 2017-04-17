@@ -7,19 +7,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.regex.Pattern;
 
 
 
 public class ParserStopSalePage {
-
-    public static final Logger logger = LoggerFactory.getLogger(ParserStopSalePage.class);
-    public static final Pattern pattern = Pattern.compile("(\\d+)");
 
     /**获取停售的车型配置
      * parseStopSaleData:(). 

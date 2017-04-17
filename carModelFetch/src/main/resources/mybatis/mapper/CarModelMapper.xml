@@ -25,7 +25,7 @@
     <result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
     <result column="MODIFITER_ID" property="modifiterId" jdbcType="VARCHAR" />
     <result column="CAR_NUM" property="carNum" jdbcType="VARCHAR" />
-    <result column="OIL_LV" property="oilLv" jdbcType="VARCHAR" />
+    <result column="OIL_LEVEL" property="oilLv" jdbcType="VARCHAR" />
     
     <result column="BRAND_NAME" property="brandName" jdbcType="VARCHAR" />
     <result column="FACTOR_NAME" property="factorName" jdbcType="VARCHAR" />
@@ -62,7 +62,7 @@
     <result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
     <result column="MODIFITER_ID" property="modifiterId" jdbcType="VARCHAR" />
     <result column="CAR_NUM" property="carNum" jdbcType="VARCHAR" />
-    <result column="OIL_LV" property="oilLv" jdbcType="VARCHAR" />
+    <result column="OIL_LEVEL" property="oilLv" jdbcType="VARCHAR" />
     
     <result column="BRAND_NAME" property="brandName" jdbcType="VARCHAR" />
     <result column="FACTOR_NAME" property="factorName" jdbcType="VARCHAR" />
@@ -85,7 +85,7 @@
 	WHERE 
 		P_ID=#{pid,jdbcType=VARCHAR}
 	AND 
-		NAME=#{name,jdbcType=VARCHAR}
+		NAME LIKE #{name,jdbcType=VARCHAR}
   </select>
   
   <select id="selectAllCarModel" resultMap="carModelVoMap">
@@ -174,6 +174,9 @@
       <if test="carStatus != null" >
         CAR_STATUS,
       </if>
+      <if test="oilLv != null" >
+        OIL_LEVEL,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -247,6 +250,9 @@
       </if>
       <if test="carStatus != null" >
         #{carStatus,jdbcType=VARCHAR},
+      </if>
+       <if test="oilLv != null" >
+       #{oilLv,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>

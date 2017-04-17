@@ -2,6 +2,8 @@ package com.fei.carFeicher;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Before;
@@ -33,8 +35,8 @@ public class MapperTest {
 
 	@Test
 	public void test() {
-		CarModel carModel = carModelMapper.selectCarModelByPidAndName("4422EA4C30606B2AE050A8C0340118E8", "斯巴鲁");
-		System.out.println(carModel);
+		List<CarModel> list= carModelMapper.selectCarModelByPidAndName("4422EA4C30606B2AE050A8C0340118E8", "斯巴鲁");
+		System.out.println(list.get(0));
 	}
 
 }
